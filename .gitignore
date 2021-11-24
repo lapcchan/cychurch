@@ -1,0 +1,8 @@
+.DS_Store
+errors/*
+cache/*
+databases/*
+sessions/*
+compiled/*
+compiled/
+uploads/*

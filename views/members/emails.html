@@ -1,0 +1,19 @@
+<div style="text-align:right;">
+<a href="#" class="jqmClose">[{{=T('Close')}}]</a>
+</div>
+<div>
+<center>
+<form name="select_all">
+{{=count}} {{=T("selected records")}}, {{=ecount}} {{=T("email addresses")}}<br/></br>
+<textarea name="text_area" rows="12" style="position:relative;width:90%">
+{{=emails}}
+</textarea>
+
+<br>
+<input type="button" value="{{=T('Select All')}}" onClick="javascript:this.form.text_area.focus();this.form.text_area.select();">
+
+</form>
+Note: right-click on the selected text in order to copy and paste
+</center>
+
+</div>

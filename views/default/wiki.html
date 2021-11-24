@@ -1,0 +1,18 @@
+{{extend 'layout.html'}}
+<div>
+hello
+{{if request.args[1:2]==['edit']:}}
+<h1>Edit Page</h1>
+{{pass}}
+
+{{=form}}
+
+{{if request.args[1:2]==['edit']:}}
+<script src="/{{=request.application}}/static/scripts/nicEdit.js" type="text/javascript"></script><script>
+$(document).ready(function(){
+$('textarea').attr('cols','100').attr('rows','40');
+new nicEditor({fullPanel : true, iconsPath : '/{{=request.application}}/static/media/nicEditorIcons.gif'}).panelInstance('t2_wiki_body');
+});
+</script>
+{{pass}}
+</div>

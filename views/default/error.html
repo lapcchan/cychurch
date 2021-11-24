@@ -1,0 +1,9 @@
+{{extend 'layout.html'}}
+
+<h1>Internal Error</h1>
+
+<p>
+{{if is_admin:}}
+You are seeing this page not because of an error in the code but because one of the page components is redirecting you here. It may be a workflow issue. Make sure you components have the proper "next" attribute.
+{{pass}}
+</p>

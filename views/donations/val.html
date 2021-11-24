@@ -1,0 +1,60 @@
+{{extend 'layout.html'}}
+
+<script type="text/javascript"><!--
+$(document).ready(function(){
+	$("select#dtypename").change(function(){
+		$.getJSON("/{{=request.application}}/donations/select_dtypecontent",{id: $(this).val()}, function(j){
+			var options = '';
+			for (var i = 0; i < j.length; i++) {
+				options += '<option value="' + j[i].optionValue + '">' + j[i].optionDisplay + '</option>';
+			}
+			$("#dtypecontent").html(options);
+			$('#dtypecontent option:first').attr('selected', 'selected');
+		});
+	});			
+	$("select#dtypecontent").change(function(){
+		$("#okok").append($("#dtypecontent").val());
+		$("#okok").append("hello<br/>");
+		$("#space").append("<br/>");
+	});			
+
+	$("#submit").click(function(){
+		if ($("#sform").validate().form()) {
+		alert("ok");
+		}
+	});
+});
+
+-->
+</script>
+
+<form id="sform">
+	<select id="dtypename">
+	{{for x in dtypename:}}
+		<option value="{{=x.name}}">{{=x.name}}</option>
+	{{pass}}
+	</select>
+	<select id="dtypecontent">
+	{{for x in dtypecontent:}}
+		<option value="{{=x.id}}">{{=x.content}}</option>
+	{{pass}}
+	</select>
+	<label for="curl">URL (optional)</label>
+	<p>
+		<input id="curl" name="url" class="dateISO" value="" />
+	</p>
+		<input class="submit" type="submit" value="Submit" id="submit"/>
+</form>
+
+
+<div style="position:relative;height:100%;">
+	<div id="t1" style="position:relative;float:left;width:100px;height:100%">
+	</div>
+	<div id="t2" style="float:left;width:300px;margin:0 20px;height:100%">
+	</div>
+	<div id="t3" style="float:left;width:100px;height:100%">
+	</div>
+</div>
+
+<div id="dlist">
+</div>

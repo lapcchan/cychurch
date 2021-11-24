@@ -1,0 +1,278 @@
+{{extend 'layout.html'}}
+<form autocomplete="off"> </form>
+<script src="/{{=request.application}}/static/scripts/date.js"></script>
+
+<script type="text/javascript">
+function encode_utf8( s ) { if ($.browser.msie) { return encodeURI( s ) ; } else { 
+reg = /\s+/;
+ss = s.replace(reg,'+')
+return ss; } }
+var selectlock = false;
+var search_list = {};
+var search_text = "";
+var nameid = "";
+
+function prepareValue(tn){
+	estr = 'if ($("#search_'+tn+'").val() != "") search_list["s_'+tn+'"] = $("#search_'+tn+'").val(); else search_list["s_'+tn+'"] = "";';
+	eval(estr);
+};
+function prepareCheck(tn){
+	estr = 'if ($("#search_'+tn+'").is(":checked")) search_list["s_'+tn+'"] = "True"; else search_list["s_'+tn+'"] = "";';
+	eval(estr);
+};
+
+function gridReload(){ 
+
+	vlist = ['fromdate','todate','name','church','dtype'];
+
+	for (i=0;i<vlist.length;i++) { prepareValue(vlist[i]); }
+
+	search_text = "";
+	for (xx in search_list) {
+		if (search_list[xx] != "") search_text += "&" + xx + "=" + search_list[xx];
+	}
+    search_text = encode_utf8(search_text)+"&nameid="+nameid;
+
+	$("#list2").setGridParam({url:"/{{=request.application}}/donations/searchresult?s=s"+search_text,page:1}).trigger("reloadGrid"); 
+};
+
+$(document).ready(function(){
+
+setthisweek();
+
+	vlist = ['fromdate','todate'];
+
+	for (i=0;i<vlist.length;i++) { prepareValue(vlist[i]); }
+
+	search_text = "";
+	for (xx in search_list) {
+		if (search_list[xx] != "") search_text += "&" + xx + "=" + search_list[xx];
+	}
+    search_text = encode_utf8(search_text);
+
+$.jgrid.defaults = {
+    recordtext: "{{=T('Row(s)')}}",
+	loadtext: "{{=T('Loading..')}}",
+    pgtext : "/"
+};
+
+
+$("#list2").jqGrid({
+   	url:'/{{=request.application}}/donations/searchresult?s=s'+search_text,
+	datatype: "json",
+   	colNames:['','{{=T("Date")}}','{{=T("Church")}}','{{=T("Amount")}}','{{=T("Name")}}','{{=T("donation name")}}','{{=T("donation content")}}','{{=T("donation type")}}','{{=T("Group")}}','{{=T("number")}}'],
+   	colModel:[
+   		{name:'id',index:'id', width:30, sortable:false},
+   		{name:'ddate',index:'ddate', width:50},
+   		{name:'church',index:'church', width:50},
+   		{name:'damount',index:'damount', width:40, align:"right"},
+   		{name:'donator',index:'donator', width:60},	
+   		{name:'dname',index:'dname', width:50},		
+   		{name:'dcontent',index:'dcontent', width:50},	
+   		{name:'dtype',index:'dtype', width:40},	
+   		{name:'dgroup',index:'dgroup', width:40},	
+   		{name:'dnumber',index:'dnumber', width:40},	
+   	],
+	width:720,
+	height:360,
+   	rowNum:50,
+   	rowList:[30,50,100,150,200],
+	loadui:"block",
+//	multiselect: true, 
+	gridComplete: function(){
+		rowlist = $('#list2').getDataIDs();
+        $('#list2').resetSelection(); 
+		for (i=0;i<rowlist.length;i++) {
+			alink = "<a href='/{{=request.application}}/donations/show/" +rowlist[i]+ "' target='_blank'>{{=T('Edit')}}</a>";
+			$("#list2").setRowData(rowlist[i],{id:alink});
+		}
+	},
+    imgpath: '/{{=request.application}}/static/styles/jqgrid/sand/images',
+   	pager: jQuery('#pager2'),
+   	sortname: 'ddate',
+    viewrecords: true,
+    sortorder: "desc",
+	hidegrid: false,
+    caption:"{{=T('Donations Search List')}}"
+}).navGrid('#pager2',{edit:false,add:false,del:false,search:false,refresh:false});
+
+    $("#search_name").autocomplete("/{{=request.application}}/donations/coderesult", {
+        width: 180,
+        minChars: 1,
+		max: 100,
+        autoFill: false,
+        selectFirst: true,
+        formatItem: function(row, i, max) {
+            if (row[3]) {       
+            return row[1] + ":  " + row[2] + " [" + row[3] + "]";
+            } else {
+            return row[1] + ":  " + row[2];
+            }
+        },
+        formatResult: function(row) {
+            if (row[3]) {       
+            return row[2] + " [" + row[3] + "]";
+            } else {
+            return row[2];
+            }
+        }
+    });
+
+    $("#search_name").result(function(event, data, formatted) {
+        if (data) {
+			nameid=data[0];
+			doSearch();	
+		}
+    });
+
+	$('select#year').change(function(){
+		doYear();
+	});
+
+});
+
+var timeoutHnd;
+var flAuto = true; 
+
+function doSearch(ev){ 
+	gridReload();
+};
+
+
+function enableAutosubmit(state){
+	flAuto = state;
+	$("#submitButton").attr("disabled",state); 
+} ;
+
+function doYear(){
+	var year = $("select#year").val();
+	if (year != "") {
+		var nyear = parseInt(year)+1;
+		$("#search_fromdate").val(year+"-04-01");
+		$("#search_todate").val(nyear+"-03-31");
+		doSearch();
+	} else {
+		$("#search_fromdate").val("");
+		$("#search_todate").val("");
+		doSearch();
+	};
+};
+
+function gotoday(){
+    tmpdate = Date.today().toString('yyyy-MM-dd');
+	$("#search_fromdate").val(tmpdate);
+	$("#search_todate").val(tmpdate);
+	$("#year").val("");
+    doSearch();
+};
+
+function setthisweek(){
+    if (Date.today().is().sunday()) {
+        tmpdate = Date.today().toString('yyyy-MM-dd');
+    } else {
+        tmpdate = Date.today().last().sunday().toString('yyyy-MM-dd');
+    }
+    if (Date.today().is().saturday()) {
+        endtmpdate = Date.today().toString('yyyy-MM-dd');
+    } else {
+        endtmpdate = Date.today().next().saturday().toString('yyyy-MM-dd');
+    }
+	$("#search_fromdate").val(tmpdate);
+	$("#search_todate").val(endtmpdate);
+};
+
+function gothisweek(){
+	setthisweek();
+	$("#year").val("");
+    doSearch();
+};
+
+function gonextweek(){
+    if (Date.today().is().sunday()) {
+        tmpdate = Date.today().next().sunday().toString('yyyy-MM-dd');
+    } else {
+        tmpdate = Date.today().next().sunday().toString('yyyy-MM-dd');
+    }
+    if (Date.today().is().saturday()) {
+        endtmpdate = Date.today().next().saturday().toString('yyyy-MM-dd');
+    } else {
+        endtmpdate = Date.today().next().saturday().addDays(7).toString('yyyy-MM-dd');
+    }
+	$("#search_fromdate").val(tmpdate);
+	$("#search_todate").val(endtmpdate);
+	$("#year").val("");
+    doSearch();
+};
+
+function cleanup(){
+
+	$("#year").val("");
+	location.reload();
+
+};
+
+function doPrint(){
+	search_list = [];
+	vlist = ['fromdate','todate','church','name','dtype'];
+
+	for (i=0;i<vlist.length;i++) { prepareValue(vlist[i]); }
+
+	search_text = "";
+	for (xx in search_list) {
+		if (search_list[xx] != "") search_text += "&" + xx + "=" + search_list[xx];
+	}
+    search_text = encode_utf8(search_text)+"&nameid="+nameid;
+
+	$('#ex3').jqm({
+		ajax: '{{=URL(r=request,f='printout',vars=dict(_=time.time()))}}'+search_text,
+		ajaxText: '<div><center><img id="LoadingBox" src="/{{=request.application}}/static/images/loading.gif"/>Loading...</center></div>'
+	}).jqmShow();
+};
+
+</script>
+
+<div>  
+	{{=T('Date')}}: <input type="text" id="search_fromdate" class="date" size="10" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" onchange="doSearch(arguments[0]||event)" />
+	&nbsp;&nbsp;{{=T('to')}}: <input type="text" id="search_todate" class="date" size="10" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" onchange="doSearch(arguments[0]||event)"/>
+	&nbsp;&nbsp;{{=T('Year')}}: 
+    <select id="year">
+        <option value=""></option>
+        <option value="2008">2008</option>
+        <option value="2009">2009</option>
+        <option value="2010">2010</option>
+        <option value="2010">2011</option>
+        <option value="2010">2012</option>
+        <option value="2010">2013</option>
+        <option value="2010">2014</option>
+        <option value="2010">2015</option>
+        <option value="2010">2016</option>
+        <option value="2010">2017</option>
+        <option value="2010">2018</option>
+    </select>
+	<button onclick="gotoday();" style="margin-left:10px;">{{=T('Today')}}</button>
+	<button onclick="gothisweek();" style="margin-left:10px;">{{=T('This Week')}}</button>
+	<button onclick="gonextweek();" style="margin-left:10px;">{{=T('Next Week')}}</button>
+	<button onclick="cleanup();" id="clearButton" style="margin-left:10px;">{{=T('Clear')}}</button>
+	<button onclick="gridReload()" id="submitButton" style="margin-left:10px;">{{=T('Search')}}</button>
+</div> 
+<div>
+	{{=T('Name')}}: <input type="text" id="search_name"  size="10" />
+	{{church_list_result=db(db.church_list.id>0).select()}}
+    {{church_list = []}}
+    {{for x in church_list_result: church_list.append(x.name)}}
+    &nbsp;&nbsp;{{=T('Church')}}: {{=SELECT(church_list,_id='search_church',_onChange="doSearch(arguments[0]||event)")}}
+	{{dtype_list_result=db(db.dtype_list.id>0).select(groupby=db.dtype_list.name,orderby=db.dtype_list.number)}}
+    {{dtype_list = [""]}}
+    {{for x in dtype_list_result: dtype_list.append(x.name)}}
+    &nbsp;&nbsp;{{=T('donation name')}}: {{=SELECT(dtype_list,_id='search_dtype',_onChange="doSearch(arguments[0]||event)")}}
+</div>
+
+<br/>
+<div><center>
+[<a href='javascript: doPrint();'>{{=T("Print")}}</a>]
+</center></div>
+<div><center>
+<table id="list2" class="scroll" cellpadding="0" cellspacing="0"></table> 
+<div id="pager2" class="scroll" style="text-align:center;"></div> 
+</center></div>
+{{=output}}

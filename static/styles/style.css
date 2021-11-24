@@ -1,0 +1,175 @@
+
+body {font-size:62.5%;font-family: Verdana, Arial,'Lucida Grande', Sans-Serif;background-color:#d5d6d7;color:#333;text-align:center;margin:0;padding:0;}
+body#home a#homenav, body#popular a#popnav, body#store a#storenav, body#archives a#archivesnav, body#forum a#forumnav, body#wordpress a#wpnav, body#charity a#charitynav, body#subscribe a#subscribenav, body#about a#aboutnav, body#contact a#contactnav, body#advertise a#advertisenav, body#coupon a#couponnav, body#photos a#photosnav, body#books a#booksnav, body#links a#linksnav {color:#FFF;border-bottom: 2px solid #FFFFFF;}
+
+#page {background-color:#FFF;border:0 ;text-align:left;width:820px;margin:10px auto;padding:0 ;}
+#mbody {background-color:#FFF;color: #222222;border:0 ;text-align:left;width:780px;margin:10px auto;padding:0 ;font-size:1.3em;}
+
+#mbody A { text-decoration: none; color: #f34d00; }
+#mbody A:hover { text-decoration: underline; }
+#mbody INPUT { color: blue; font-size:90%;}
+#mbody SELECT { color: blue; font-size:85%;}
+#mbody TEXTAREA { color: blue;font-size:90%;}
+#mbody INPUT:focus { background-color: #f3d4d4; }
+#mbody TEXTAREA:focus { background-color: #f3d4d4; }
+#mbody P { margin-bottom: 10px; line-height: normal; }
+#mbody .header { magin: 0; width: 100%; height: 100px }
+#mbody .subtitle { margin: 0; float: left; padding: 30px 0 0 2px; font-size: 1.8em; font-family: Tahoma, Arial, Helvetica }
+#mbody h1,h2,h3 {color:#222222}
+#tabs {font-size:110%;}
+#tabs INPUT[type=text] { width:330px;}
+#tabs INPUT { font-size:100%;}
+#tabs SELECT { font-size:100%;}
+#tabs TEXTAREA { font-size:125%;width:330px;}
+
+h1 {font-family:'Trebuchet MS', 'Lucida Grande', Verdana, Arial, Sans-Serif;font-weight:bold;font-size: 1.6em;text-align: left;padding-top: 8px !important;padding-top: 5px;margin: 0px 0px 0px 40px;}
+h1,h1 a,h1 a:hover,h1 a:visited {text-decoration:none;color: #FFF;}
+
+* html .greybar {margin-left: 16px;}
+
+.sf-menu, .sf-menu ul { 
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.sf-menu {
+  font:bold 14px/14px Verdana, Lucida Grande, Arial, Helvetica, Sans-Serif;
+  z-index: 100;
+  position: relative;
+  top:1px !important;
+  top:2px;width:820px;text-align:left;display:block;margin:0 0 0 15px;padding:1px 16px;
+}
+
+.sf-menu li {
+  color: #FFFFFF;
+  float: left;
+  margin: 0;
+  position: relative;
+}
+.sf-menu li a, .sf-menu li a:link, .sf-menu li a:active, .sf-menu li a:visited {
+  font:bold 14px/14px Verdana, Lucida Grande, Arial, Helvetica, Sans-Serif;
+  color: #FFFFFF;
+  height:16px;
+  display: block;
+  padding: 3px 9px;
+  text-transform: lowercase;
+  text-decoration: none;
+}
+
+.sf-menu li a:hover {
+  color: #000000;	
+}
+#nav-one li:hover a, 
+#nav-one li.sfHover a {
+  color: #000000;
+}
+#nav-one li:hover ul a, 
+#nav-one li.sfHover ul a {
+  background: #5699d0;
+  color: #FFFFFF;	
+}
+#nav-one li:hover ul a:hover, 
+#nav-one li.sfHover ul a:hover {
+  background: #5699d0;
+  color: #000000;	
+}
+
+.sf-menu ul {
+  background: #5699d0;
+  border-bottom: 1px solid #999;
+  list-style: none;
+  margin: 0;
+  width: auto;
+  position: absolute;
+  top: -999em;
+  left: -1px;
+}
+.sf-menu li:hover ul,
+.sf-menu li.sfHover ul {
+  top: 18px;
+}
+.sf-menu ul li {
+  border: 0;
+  float: none;
+}
+.sf-menu ul a {
+/*
+  border-right: 1px solid #999;
+  padding-right: 20px;
+*/
+  width: auto;
+  white-space: nowrap;
+}
+.sf-menu ul a:hover {
+  background: #5699d0;
+  color: #000000;
+}
+
+.narrowcolumn {float:left;width:450px;margin:0;padding:0 5px 20px 30px;}
+.post {text-align:justify;margin:0 0 40px;}
+.widecolumn .postmetadata {margin:30px 0;}
+#mainheader    { margin: 0 !important; margin: 0px 0px 0px 1px; padding: 0px;height: 50px; width: 820px; }
+#headerimg     { margin: -2px 0px 0; height: 100px; width: 820px;}
+#footer p {text-align:center;margin:0;padding:20px 0;}
+
+/* ********************** */
+/* for the flash message */
+/* ********************** */
+
+.flash { 
+max-width: 700px;
+font:bold 15px/15px Verdana, Lucida Grande, Arial, Helvetica, Sans-Serif;
+position: absolute; top: 58px; width: 100%; 
+#height: 20px; 
+opacity: 0.75; margin: 0 45px auto; text-align: center; clear: both; 
+border: 3px #5699d0 solid; border-top:0; color: #F34D00; 
+padding: 20px 10px 5px 10px; cursor: pointer; background: white; 
+}
+
+/* ********************** */
+/* for errors in page */
+/* ********************** */
+
+.error { background-color: red; color: white; padding: 3px }
+
+
+/* ********************** */
+/* For the tagging widget */
+/* ********************** */
+
+.tag_row { height: 20px; padding: 5px 5px 5px 5px }
+.tag_col { padding: 0px 5px 0px 0px }
+.tag_on, .tag_on:hover { color: white; background-color:#79A73B; padding: 5px 5px 5px 5px }
+.tag_off, .tag_off:hover { color:black; background-color: #dddddd; padding: 5px 5px 5px 5px }
+.authentication { text-align: right; font-size: 1.2em; padding: 5px 5px 5px 5px; }
+
+
+/* jqM */
+.jqmWindow {
+    display: none;
+    
+    position: fixed;
+	font-size: 150%;
+    top: 10%;
+    left: 50%;
+    
+    margin-left: -300px;
+    width: 600px;
+    
+    background-color: #EEE;
+    color: #333;
+    border: 1px solid black;
+    padding: 12px;
+}
+
+.jqmOverlay { background-color: #000; }
+
+/* Fixed posistioning emulation for IE6 
+Star selector used to hide definition from browsers other than IE6
+     For valid CSS, use a conditional include instead 
+* html .jqmWindow {
+     position: absolute;
+     top: expression((document.documentElement.scrollTop || document.body.scrollTop) + Math.round(17 * (document.documentElement.offsetHeight || document.body.clientHeight) / 100) + 'px');
+}
+*/

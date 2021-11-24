@@ -1,0 +1,26 @@
+{{extend 'layout.html'}}
+
+<h1>Static Files</h1>
+
+<h2>Uploaded Files</h2>
+<table>
+<tr><th>Name</th><th>Action</th></tr>
+{{for file in files:}}
+<tr><td width="300px">
+<a class="zoom" href="#zoom-{{=file.id}}">{{=file.name}}</a>
+<div class="hidden" id="zoom-{{=file.id}}">
+{{if file.data[-4:].lower() in ['.gif','.jpg','.png']:}}
+<img src="{{=t2.action('download',file.data)}}" width="400px"/>
+{{else:}}
+<iframe src="{{=t2.action('download',file.data)}}" width="400px"></iframe>
+{{pass}}
+</div>
+</td>
+<td>
+<a href="{{=t2.action('download',[file.data])}}">download</a> |
+<a href="{{=t2.action('static',['delete',file.id])}}">delete</a></td></tr>
+{{pass}}
+</table>
+
+<h2>Upload Form</h2>
+{{=form}}

@@ -1,0 +1,129 @@
+<div style="text-align:right;">
+<a href="#" class="jqmClose">[{{=T('Close')}}]</a>
+</div>
+{{if request.vars.id:}}
+<div>
+{{=T('Print Current Record')}}
+<br/><br/>
+<!--
+id:{{=request.vars.id}}
+--!>
+</div>
+{{elif request.vars.list == "list":}}
+<div>
+{{=T("Print")}} {{=T("Members Search List")}}
+<br/><br/>
+{{=T('Note: it may takes over a minute per thousand records for PDF generation.')}}<br/>
+{{=T('Note: you have to wait for the PDF completed before you can continue.')}}<br/>
+{{=T('Note: PDF Details may takes over 4 minutes per thousand records.')}}
+<br/><br/>
+
+{{else:}}
+<div>
+{{=T("Print")}} {{=count}} {{=T("selected records")}}
+<br/><br/>
+{{if count > 300:}}
+{{=T('Note: it may takes over a minute per thousand records for PDF generation.')}}<br/>
+{{=T('Note: you have to wait for the PDF completed before you can continue.')}}<br/>
+{{=T('Note: PDF Details may takes over 4 minutes per thousand records.')}}
+{{pass}}
+<br/>
+{{pass}}
+<a target="_blank" href="{{=URL(r=request,f='pdf0',vars=request.vars)}}">PDF [
+{{=T("Code")}},
+{{=T("Name")}},
+{{=T("Membership number")}},
+{{=T("Join Date")}},
+{{=T("Ceremony")}},
+{{=T("Reverend")}}
+]</a><br/>
+<a target="_blank" href="{{=URL(r=request,f='pdf1',vars=request.vars)}}">PDF [
+{{=T("Name")}},
+{{=T("Code")}},
+{{=T("Sex")}},
+{{=T("Birthday")}},
+{{=T("Phone Number")}},
+{{=T("Occupation")}},
+{{=T("Education")}},
+{{=T("Join Date")}},
+{{=T("Reverend")}}
+]</a><br/>
+<a target="_blank" href="{{=URL(r=request,f='pdf2',vars=request.vars)}}">PDF [
+{{=T("Name")}},
+{{=T("Code")}},
+{{=T("Residential Address")}},
+{{=T("Phone Number")}}
+]</a><br/>
+<a target="_blank" href="{{=URL(r=request,f='pdf3',vars=request.vars)}}">PDF [
+{{=T("Name")}},
+{{=T("Code")}},
+{{=T("Remark")}},
+{{=T("Residential Address")}},
+{{=T("Phone Number")}}
+]</a><br/>
+<a target="_blank" href="{{=URL(r=request,f='pdf4',vars=request.vars)}}">PDF [
+{{=T("Name")}},
+{{=T("Code")}},
+{{=T("Sex")}},
+{{=T("Birthday")}},
+{{=T("Join Date")}},
+{{=T("Reverend")}}
+]</a><br/>
+<a target="_blank" href="{{=URL(r=request,f='pdf5',vars=request.vars)}}">PDF [
+{{=T("Name")}},
+{{=T("Code")}},
+{{=T("Sex")}},
+{{=T("Phone Number")}}
+]</a><br/>
+<a target="_blank" href="{{=URL(r=request,f='pdf6',vars=request.vars)}}">PDF [
+{{=T("Name")}},
+{{=T("Code")}},
+{{=T("Sex")}}
+]</a><br/>
+<a target="_blank" href="{{=URL(r=request,f='pdf7',vars=request.vars)}}">PDF [
+{{=T("Name")}},
+{{=T("Code")}},
+{{=T("Remark")}},
+{{=T("Residential Address")}},
+{{=T("Phone Number")}},
+{{=T("Stay with")}}
+]</a><br/>
+<a target="_blank" href="{{=URL(r=request,f='pdf8',vars=request.vars)}}">PDF [
+{{=T("Name")}},
+{{=T("Code")}},
+{{=T("Residential Address")}},
+{{=T("Phone Number")}},
+{{=T("Email Address")}},
+{{=T("Committee")}}
+]</a><br/>
+<a target="_blank" href="{{=URL(r=request,f='pdf9',vars=request.vars)}}">PDF [
+{{=T("Name")}},
+{{=T("Code")}},
+{{=T("Phone Number")}},
+{{=T("Email Address")}},
+{{=T("Committee")}}
+]</a><br/>
+<a target="_blank" href="{{=URL(r=request,f='pdfd',vars=request.vars)}}">PDF [
+{{=T('Details')}}
+]</a><br/>
+<a target="_blank" href="{{=URL(r=request,f='pdfv',vars=request.vars)}}">PDF [
+{{=T('Visiting Form')}}
+]</a><br/>
+<a target="_blank" href="{{=URL(r=request,f='pdfe',vars=request.vars)}}">PDF [
+{{=T('Envelope')}}
+]</a><br/>
+<a target="_blank" href="{{=URL(r=request,f='pdfl',vars=request.vars)}}">PDF [
+{{=T('Label')}}
+]</a><br/>
+<a target="_blank" href="{{=URL(r=request,f='html1',vars=request.vars)}}">HTML [
+{{=T('Image')}}
+]</a><br/>
+</center>
+
+<div style="font-size:10px;">
+<br/>
+{{=T('Note: After the PDF generated, you can save it as a file for future printing.')}}
+<br/>
+{{=T('You can also right-click on PDF link now and select (Save Link As) to save the PDF directly.')}}
+</div>
+</div>

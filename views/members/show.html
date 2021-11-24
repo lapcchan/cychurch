@@ -1,0 +1,305 @@
+{{extend 'layout.html'}}
+
+<style type="text/css" media="screen">
+<!--
+#tabnav A{
+}
+
+#arrows {
+	float:right;
+	margin-right:10px;
+}
+#cancel_edit {
+	float:right;
+	margin-right:10px;
+}
+
+UL.tabNavigation {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+UL.tabNavigation LI {
+    display: inline;
+}
+
+UL.tabNavigation LI A {
+    padding: 3px 8px;
+    background-color: #e0e0e0;
+    text-decoration: none;
+}
+
+UL.tabNavigation LI A.selected,
+UL.tabNavigation LI A:hover {
+    background-color: #ccc;
+	font-weight:bold;
+    padding-top: 7px;
+}
+		
+UL.tabNavigation LI A:focus {
+	outline: 0;
+}
+
+div.tabs > div {
+	padding: 5px;
+	margin-top: 3px;
+	border: 5px solid #ccc;
+}
+		
+div.tabs > div h2 {
+	margin-top: 0;
+}
+
+#personal {
+    background-color: #ccc;
+}
+
+#relative {
+    background-color: #ccc;
+}
+
+#third {
+    background-color: #ccc;
+}
+		
+.waste {
+	min-height: 1000px;
+}
+
+input[disabled] {color:red;}
+/*
+#members_family1__label {
+  position: relative;
+  top: 1px;
+  left: 5px;
+  max-width:70px
+}
+#members_family1 {
+  position: relative;
+  top: 1px;
+  left: 10px;
+  max-width:70px
+}
+#members_relation1 {
+  position: relative;
+  top: -27px;
+  left: 100px;
+  max-width:70px
+}
+#members_is_mem1 {
+  position: relative;
+  top: -54px;
+  left: 250px;
+  max-width:70px
+}
+
+#members_family2__label {
+  position: relative;
+  top: -54px;
+  left: 5px;
+  max-width:70px
+}
+#members_family2 {
+  position: relative;
+  top: -54px;
+  left: 10px;
+  max-width:70px
+}
+#members_relation2 {
+  position: relative;
+  top: -81px;
+  left: 100px;
+  max-width:70px
+}
+#members_is_mem2 {
+  position: relative;
+  top: -108px;
+  left: 250px;
+  max-width:70px
+}
+
+
+
+
+#members_is_mem1__label { visibility:hidden; top: 1px; left: 1px; }
+#members_relation1__label { visibility:hidden; top: 1px; left: 1px; }
+#members_is_mem2__label { visibility:hidden; top: 1px; left: 1px; }
+#members_relation2__label { visibility:hidden; top: 1px; left: 1px; }
+#members_is_mem2__label { visibility:hidden; top: 1px; left: 1px; }
+#members_relation3__label { visibility:hidden; top: 1px; left: 1px; }
+#members_is_mem3__label { visibility:hidden; top: 1px; left: 1px; }
+#members_relation3__label { visibility:hidden; top: 1px; left: 1px; }
+
+#members_is_mem12__label { visibility:hidden; top: 1px; left: 1px; }
+#members_relation12__label { visibility:hidden; top: 1px; left: 1px; }
+
+*/
+#submit_record__row {
+/*  display:none;
+*/
+}
+
+
+-->
+</style>
+
+
+<script type="text/javascript" charset="utf-8">
+	var editmode = false;
+	$(function () {
+		var tabContainers = $('div.tabs > div');
+		tabContainers.hide().filter('#{{=tab}}').show();
+			
+		$('div.tabs ul.tabNavigation a').click(function () {
+			if (!editmode) {
+			tabContainers.hide();
+			tabContainers.filter(this.hash).show();
+			$('div.tabs ul.tabNavigation a').removeClass('selected');
+			$(this).addClass('selected');
+			} else {
+				var tab = $(this).attr('href');
+				var txt = '<center>{{=T('Are you sure?')}}<br/>{{=T('All changes will be discarded.')}}</center>';
+				$.prompt(txt,{
+				buttons:{ {{=T('yes')}}:true,{{=T('no')}}:false},
+				callback: function(v,m){
+					if (v){
+						window.location='{{=URL(r=request,args=[thisid])}}'+"?tab="+tab.substring(1);
+					}
+				}});
+			}
+			return false;
+		});//.filter('#{{=tab}}').click();
+	});
+
+
+
+</script>
+
+<div class="arrows" id="arrows">
+[<a href='#' class="ex3trigger" target="emails">{{=T("Print")}}</a>]
+[<a href="{{=URL(r=request,c='members',f='search',args=[''])}}" title="{{=T("Member Search")}}">{{=T("Search")}}</a>]
+[<a href="{{=URL(r=request,c='members',f='new',args=[''])}}" title="{{=T("New Member")}}">{{=T("New Member")}}</a>]
+{{if wa.have_access("member_edit"):}}
+[<a href="#" id="edit_control">{{=T('Edit')}}</a>]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
+{{pass}}
+[<a href="{{=URL(r=request,args=prev)}}" >{{=T('Prev')}}</a>] | 
+[<a href="{{=URL(r=request,args=next)}}" >{{=T('Next')}}</a>]
+</div>
+<div class="cancel_edit" id="cancel_edit">
+<a href="#" id="edit_control">[{{=T('Cancel Edit')}}]</a>
+</div>
+
+<div id="tabs" class="tabs">
+        <ul class="tabNavigation" id="tabnav">
+
+            <li><a class="{{=tabp}}" href="#personal">{{=T('Personal Information')}}</a></li>
+            <li><a class="{{=tabr}}" href="#relative">{{=T('Relative Information')}}</a></li>
+        </ul>
+
+        <div style="display: block;" id="personal">
+            <span style="float:right;width:250px;"><center><h3>{{=displayname}}</h3></center>
+			{{=T('Membership number')}}: {{=displaymem}}<br/>
+			{{=T('Childhood Membership number')}}: {{=displaychild}}<br/>
+			{{=T('Church')}}: {{=church}}<br/><br/>
+			{{=T('Modify by')}}: {{=modified_by}}<br/>
+			{{=T('Last Modified')}}: {{=last_modified}}<br/><br/><br/>
+		    {{if ((image != None) and (image != "")):}}
+			<a target="_new" href="{{=URL(r=request,f='download',args=[image])}}">
+			<img border=0 width="180px" src="{{=URL(r=request,f='download',args=[image])}}"/>
+			</a>
+			{{pass}}
+			</span>
+			{{=form1}}
+        </div>
+
+        <div style="display: none" id="relative">
+
+            <span style="float:right;width:250px;"><center><h3>{{=displayname}}</h3></center>
+			{{=T('Membership number')}}: {{=displaymem}}<br/>
+			{{=T('Childhood Membership number')}}: {{=displaychild}}<br/>
+			{{=T('Church')}}: {{=church}}<br/><br/>
+			{{=T('Modify by')}}: {{=modified_by}}<br/>
+			{{=T('Last Modified')}}: {{=last_modified}}<br/><br/><br/>
+		    {{if ((image != None) and (image != "")):}}
+			<a target="_new" href="{{=URL(r=request,f='download',args=[image])}}">
+			<img border=0 width="180px" src="{{=URL(r=request,f='download',args=[image])}}"/>
+			</a>
+			{{pass}}
+			</span>
+			{{=form2}}
+        </div>
+
+<script type="text/javascript" charset="utf-8">
+{{if editmode:}}
+				editmode = true;
+	$('#members_image__row').show();
+				$('.sf-menu').hide();
+				$('#personal INPUT:checkbox').attr("disabled",false);
+				$('#personal INPUT:text').attr("readonly",false);
+				$('#personal INPUT:submit').show();
+				$('#personal SELECT').attr("disabled",false);
+				$('#personal TEXTAREA').attr("readonly",false);
+				$('#relative INPUT:checkbox').attr("disabled",false);
+				$('#relative INPUT:text').attr("readonly",false);
+				$('#relative SELECT').attr("disabled",false);
+				$('#relative TEXTAREA').attr("readonly",false);
+				$('#arrows').hide();
+
+{{else:}}
+	$('#members_image__row').hide();
+	$('#cancel_edit').hide();
+	$('#personal INPUT:checkbox').attr("disabled",true);
+	$('#personal INPUT:text').attr("readonly",true);
+	$('#personal INPUT:submit').hide(); 
+	$('#personal SELECT').attr("disabled",true);
+	$('#personal TEXTAREA').attr("readonly",true);
+	$('#relative INPUT:checkbox').attr("disabled",true);
+	$('#relative INPUT:text').attr("readonly",true);
+	$('#relative SELECT').attr("disabled",true);
+	$('#relative TEXTAREA').attr("readonly",true);
+
+{{pass}}
+	$("#edit_control").click( 
+		function(){
+				$('#members_image__row').show();
+				$('.sf-menu').hide();
+				editmode = true;
+				$('#personal INPUT:checkbox').attr("disabled",false);
+				$('#personal INPUT:text').attr("readonly",false);
+				$('#personal INPUT:submit').show();
+				$('#personal SELECT').attr("disabled",false);
+				$('#personal TEXTAREA').attr("readonly",false);
+				$('#relative INPUT:checkbox').attr("disabled",false);
+				$('#relative INPUT:text').attr("readonly",false);
+				$('#relative SELECT').attr("disabled",false);
+				$('#relative TEXTAREA').attr("readonly",false);
+				$('#arrows').hide();
+				$('#cancel_edit').show();
+		}
+
+	);
+	$("#cancel_edit").click( 
+		function(){
+			var txt = '<center>{{=T('Are you sure?')}}<br/>{{=T('All changes will be discarded.')}}</center>';
+			$.prompt(txt,{
+			buttons: { {{=T('yes')}}:true,{{=T('no')}}:false},
+			callback: function(v,m){
+				if (v){
+					window.location='{{=URL(r=request,args=[thisid])}}';
+				}
+			}});
+		}
+	);
+
+
+$(document).ready(function(){
+	$('#ex3').jqm({
+		ajax: '{{=URL(r=request,f='printout',vars=dict(id=thisid,_=time.time()))}}',
+		trigger: 'a.ex3trigger',
+		ajaxText: '<div><center><img id="LoadingBox" src="/{{=request.application}}/static/images/loading.gif"/>Loading...</center></div>'
+	});
+});
+</script>
+
+</div>

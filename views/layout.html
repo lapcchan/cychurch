@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="icon" type="image/png" href="/{{=request.application}}/static/images/ccc.png">
+<link rel="shortcut icon" type="image/png" href="/{{=request.application}}/static/images/ccc.png" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="description" content="{{=response.description}}" />
+<meta name="keywords" content="{{=response.keywords}}" />
+<meta name="description" content="{{=response.author}}" />
+<title>{{=T("The Church of Christ in China Chuen Yuen Church")}}</title>
+{{include 'web2py_ajax.html'}}
+<link charset="utf-8" href="/{{=request.application}}/static/styles/style.css" rel="stylesheet" type="text/css" />
+<script src="/{{=request.application}}/static/scripts/sfmenu.js"></script>
+<script src="/{{=request.application}}/static/scripts/fancyzoom.min.js"></script>
+<link charset="utf-8" href="/{{=request.application}}/static/styles/rating.css" rel="stylesheet" type="text/css" />
+<script src="/{{=request.application}}/static/scripts/rating.js"></script>
+<script src="/{{=request.application}}/static/scripts/jquery.bgiframe.pack.js"></script>
+<script src="/{{=request.application}}/static/scripts/jquery.autocomplete.pack.js"></script>
+<link charset="utf-8" href="/{{=request.application}}/static/styles/autocomplete.css" rel="stylesheet" type="text/css" />
+<script src="/{{=request.application}}/static/scripts/jquery-impromptu.1.7.js"></script>
+<link charset="utf-8" href="/{{=request.application}}/static/styles/jqi.css" rel="stylesheet" type="text/css" />
+<link charset="utf-8" href="/{{=request.application}}/static/styles/jqgrid/jqModal.css" rel="stylesheet" type="text/css" />
+<link charset="utf-8" href="/{{=request.application}}/static/styles/jqgrid/sand/grid.css" rel="stylesheet" type="text/css" />
+<script src="/{{=request.application}}/static/scripts/jquery.jqGrid.js"></script>
+<script src="/{{=request.application}}/static/scripts/jqModal.js"></script>
+<script src="/{{=request.application}}/static/scripts/jqDnR.js"></script>
+<script src="/{{=request.application}}/static/scripts/jquery.blockUI.js"></script>
+
+<script>
+$(document).ready(function(){
+try { $('.zoom').fancyZoom({scaleImg:true, closeOnClick:true, directory:"/{{=request.application}}/static/media"}); } catch(e) {};
+try { $('.sf-menu').superfish({ animation:{opacity:'show',height:'show'},speed:'fast',autoArrows:false,dropShadows:false,delay:500,firstOnClick:true }); } catch(e) {};
+});
+</script>
+	
+<style type="text/css" media="all">
+<!--
+.greybar	{ background: url("/{{=request.application}}/static/images/greybg.png") repeat-y top;margin-left:0; }
+body	 	{ background: url("/{{=request.application}}/static/images/bgcolor.png"); }
+#page		{ background: url("/{{=request.application}}/static/images/bg.png") repeat-y top; border: none; }
+#mainheader	{ background: url("/{{=request.application}}/static/images/header50.png") no-repeat bottom center; }
+#footer 	{ background: url("/{{=request.application}}/static/images/footer.png") no-repeat bottom; border: none;}
+-->
+</style>
+ 
+</head>
+<body>
+
+<div id="page">
+
+<div id="mainheader"><div id="headerimg">					
+
+	<h1>{{=T("The Church of Christ in China Chuen Yuen Church")}}</h1>
+
+						  
+	<div id="supernavcontainer">  
+		<ul id="nav-one" class="sf-menu">  
+			<li><a href="#" title="{{=T("Member Management")}}">{{=T("Member Management")}}</a>
+				<ul>
+				<li><a href="{{=URL(r=request,c='members',f='search',args=[''])}}" title="{{=T("Member Search")}}">{{=T("Member Search")}}</a></li>
+				<li><a href="{{=URL(r=request,c='members',f='show',args=[''])}}" title="{{=T("Member List")}}">{{=T("Member List")}}</a></li>
+				<li><a href="{{=URL(r=request,c='members',f='new',args=[''])}}" title="{{=T("New Member")}}">{{=T("New Member")}}</a></li>
+				</ul>
+			</li>
+			<li><a href="#" title="{{=T("Donation Management")}}">{{=T("Donation Management")}}</a>
+				<ul>
+				<li><a href="{{=URL(r=request,c='donations',f='new',args=[''])}}" title="{{=T("New Donation")}}">{{=T("New Donation")}}</a></li>
+				<li><a href="{{=URL(r=request,c='donations',f='search',args=[''])}}" title="{{=T("Donation Search")}}">{{=T("Donation Search")}}</a></li>
+				</ul>
+			</li>
+			<li><a href="#" title="{{=T("System Management")}}">{{=T("System Management")}}</a>
+				<ul>
+				<li><a href="{{=URL(r=request,c='system',f='list',args=['church_list'])}}">{{=T("Church List")}}</a></li>
+				<li><a href="{{=URL(r=request,c='system',f='list',args=['reve_list'])}}">{{=T("Reverend List")}}</a></li>
+				<li><a href="{{=URL(r=request,c='system',f='list',args=['cere_list'])}}">{{=T("Ceremony List")}}</a></li>
+				<li><a href="{{=URL(r=request,c='system',f='list',args=['dtype_list'])}}">{{=T("Donation Type List")}}</a></li>
+				<li><a href="{{=URL(r=request,c='system',f='list',args=['mstatus_list'])}}">{{=T("Marry Status List")}}</a></li>
+				<li><a href="{{=URL(r=request,c='system',f='list',args=['relation_list'])}}">{{=T("Relation List")}}</a></li>
+				<li><a href="{{=URL(r=request,c='system',f='list',args=['educ_list'])}}">{{=T("Education Info List")}}</a></li>
+				<li><a href="{{=URL(r=request,c='system',f='list',args=['wa_users'])}}">{{=T("User Management")}}</a></li>
+				<li><a href="{{=URL(r=request,c='system',f='label')}}">{{=T("Label")}}</a></li>
+				{{if wa.user_name=='vincent':}}
+				<li><a href="{{=URL(r=request,c='appadmin',f='index')}}" title="appadmin">Admin</a></li>
+				{{pass}}
+				</ul>
+			</li>
+			<li><a href="#" title="{{=T("Support")}}">{{=T("Support")}}</a>
+				<ul>
+				<li><a href="http://www.yoric.com/yoric/support/index" target="_blank" title="{{=T("Online Support")}}">{{=T("Online Support")}}</a></li>
+				<li><a href="{{=URL(r=request,c='system',f='hkscs')}}">{{=T("HKSCS fix")}}</a></li>
+				</ul>
+			</li>
+			{{if wa.logged_in:}}
+			<li><a href="{{=URL(r=request,c='default',f='logout')}}" title="={{T("Logout")}}">{{=T("Logout")}}</a></li>
+			{{pass}}
+		</ul>  
+		<br clear="all" />
+	</div>  
+
+</div></div>
+
+		<!--
+			  {{if wa.logged_in:}}
+				{{=A('Profile',_href=URL(r=request,c='default',f='profile'))}} |
+				{{=A('Logout',_href=URL(r=request,c='default',f='logout'))}}
+			  {{else:}}
+				{{=A('Login',_href=URL(r=request,c='default',f='login'))}} |
+				{{=A('Register',_href=URL(r=request,c='default',f='register'))}} |
+				{{=A('Password',_href=URL(r=request,c='default',f='password'))}}
+			  {{pass}}
+			</div> 
+		-->
+
+		{{if response.flash:}}
+		<div class="flash">
+		{{=response.flash}}
+		<div style="text-align: right;font-size:60%">
+		[{{=T("Close")}}]
+		</div>
+		</div>
+		{{elif session.flash:}}
+		<div class="flash">
+		{{=response.flash}}
+		<div style="text-align: right;font-size:60%">
+		[{{=T("Close")}}]
+		</div>
+		</div>
+		{{pass}}
+
+		<div id="mbody">
+		{{include}}
+		</div>
+
+
+		<!-- footer -->
+		<div id="footer">
+
+			<div id="firefox">
+			{{browser = str(request.env.http_user_agent)}}
+			{{browser = browser.lower()}}
+			<!-- {{=browser}} -->
+			{{if browser.find("msie") > 0 :}}
+			<center>
+			<a href='http://www.mozilla.com/firefox/' target='firefox'><img width='468' height='60' border=0 src='/{{=request.application}}/static/images/getfirefox.png'/></a>
+			</center>
+			{{pass}}
+			</div>
+			<p class="center">
+				<strong>
+		<a href="{{=URL(r=request,c='default',f='tchinese',vars={'_dest':request.env.path_info})}}"><img src="/{{=request.application}}/static/images/b5.png" border=0/></a>
+		<a href="{{=URL(r=request,c='default',f='english',vars={'_dest':request.env.path_info})}}"><img src="/{{=request.application}}/static/images/en.png" border=0/></a>
+				</strong>
+				<br/><br/>
+				{{=T("User")}}: {{=session.wa.user_name}}
+				{{ftime = time.time()
+				etime = round(ftime-gstime,3)}}
+				&nbsp;&nbsp;{{=T("Response time")}}: {{=etime}} {{=T('seconds')}}
+				&nbsp;&nbsp;{{=T("Version")}}: 20101116
+				<br/><br/>	
+				Develop by <a href="http://www.yoric.com/" target='_new'>Yoric Network Limited</a>
+				<br/>
+			</p>
+			
+		</div> 
+		<!-- end of footer -->
+
+
+		<script>
+		</script>
+		</div>
+		<div class="jqmWindow" id="ex2" style="display:none;"></div>
+		<div class="jqmWindow" id="ex3" style="display:none;"></div>
+		<div class="jqmWindow" id="ex4" style="display:none;"></div>
+		<div class="jqmWindow" id="ex5" style="display:none;"></div>
+		<img id="LoadingBox" src="/{{=request.application}}/static/images/loading.gif" width="32" height="32" style="display:none;" />
+		</body>
+</html>

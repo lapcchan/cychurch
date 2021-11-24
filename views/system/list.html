@@ -1,0 +1,16 @@
+{{extend 'layout.html'}}
+
+{{if rows:}}
+	<div style="overflow: auto;" width="80%">
+	{{linkto=URL(r=request,f='listupdate',args=[])}}
+    {{upload="" #URL(r=request,f='download',args=request.args[:1])}}    
+    {{#=SQLTABLE(rows,linkto)}}
+    {{=SQLTABLE(rows,linkto,headers=header)}}
+    </div>
+{{pass}}
+<br/>
+<a href={{=URL(r=request,f='listcreate',args=request.args[:1])}}>{{=T('Create new record')}}</a>
+
+<div>
+{{=output}}
+</div>

@@ -1,0 +1,417 @@
+{{extend 'layout.html'}}
+<form autocomplete="off"> </form>
+
+<script type="text/javascript">
+var search_text = "";
+function encode_utf8( s ) { if ($.browser.msie) { return encodeURI( s ) ; } else { 
+reg = /\s+/;
+ss = s.replace(reg,'+')
+return ss; } }
+
+
+var selectlock = false;
+var search_list = {};
+//search_list['s_name'] = ""
+//search_list['s_code'] = ""
+// var s_name;
+// var s_code;
+
+$(document).ready(function(){
+
+$("#selectallnow").click(function () { 
+			tmpdata={};
+        	$.blockUI({  message: $('img#LoadingBox'), fadeOut:  0,  overlayCSS:  { backgroundColor:'#FFF', opacity: '0' },  css: {  top:  ($(window).height() - 32) /2 + 'px', left: ($(window).width() - 32) /2 + 'px', border: 'none', backgroundColor: 'transparent', opacity: '1', width: '32px' }  }); 
+			tmpdata["action"] = "selected";
+			$.ajax({
+  				url: "/{{=request.application}}/members/selectall", 
+				timeout: 5000,
+				data: tmpdata,
+				cache: false,
+				success: function(data){
+					$.unblockUI();
+                	$('#list2').trigger("reloadGrid");
+				},
+				error: function (XMLHttpRequest, textStatus, errorThrown) {
+					$.unblockUI();
+				}
+			});
+});
+$("#unselectallnow").click(function () { 
+			tmpdata={};
+        	$.blockUI({  message: $('img#LoadingBox'), fadeOut:  0,  overlayCSS:  {backgroundColor:'#FFF', opacity: '0'},  css: {  top:  ($(window).height() - 32) /2 + 'px', left: ($(window).width() - 32) /2 + 'px', border: 'none', backgroundColor: 'transparent', opacity: '1', width: '32px' }  }); 
+			tmpdata["action"] = "unselected";
+			$.ajax({
+  				url: "/{{=request.application}}/members/selectall", 
+				timeout: 5000,
+				data: tmpdata,
+				cache: false,
+				success: function(data){
+					$.unblockUI();
+                	$('#list2').trigger("reloadGrid");
+				},
+				error: function (XMLHttpRequest, textStatus, errorThrown) {
+					$.unblockUI();
+				}
+			});
+});
+
+$("#submitButton").attr("disabled",false); 
+
+$('#ex2').jqm({
+	ajax: '{{=URL(r=request,f='emails',vars=dict(_=time.time()))}}',
+	trigger: 'a.ex2trigger',
+	ajaxText: '<div><center><img id="LoadingBox" src="/{{=request.application}}/static/images/loading.gif"/>Loading...</center></div>'
+});
+
+$('#ex3').jqm({
+	ajax: '{{=URL(r=request,f='printout',vars=dict(_=time.time()))}}',
+	trigger: 'a.ex3trigger',
+	ajaxText: '<div><center><img id="LoadingBox" src="/{{=request.application}}/static/images/loading.gif"/>Loading...</center></div>'
+});
+
+$('#ex4').jqm({
+	ajax: '{{=URL(r=request,f='fax',vars=dict(_=time.time()))}}',
+	trigger: 'a.ex4trigger',
+	ajaxText: '<div><center><img id="LoadingBox" src="/{{=request.application}}/static/images/loading.gif"/>Loading...</center></div>'
+});
+
+
+$.jgrid.defaults = {
+    recordtext: "{{=T('Row(s)')}}",
+	loadtext: "{{=T('Loading..')}}",
+    pgtext : "/"
+};
+
+$("#list2").jqGrid({
+   	url:'/{{=request.application}}/members/searchresult',
+	datatype: "json",
+	colNames:['','sel','{{=T("Code")}}','{{=T("Name")}}','{{=T("Membership number")}}','{{=T("Sex")}}','{{=T("Phone")}}','{{=T("Occupation")}}','{{=T("Join Date")}}','{{=T("Reverend")}}','{{=T("Last Modified")}}'],
+   	colModel:[
+   		{name:'id',index:'id', width:28, sortable:false},
+   		{name:'sel',index:'id', width:0, hidden:true},
+   		{name:'code',index:'code', width:32},
+   		{name:'name',index:'name', width:50},
+   		{name:'mem_no',index:'mem_no', width:46},	
+   		{name:'sex',index:'sex', width:32},	
+   		{name:'phone',index:'r_phone', width:60},		
+   		{name:'occupation',index:'occupation', width:43},	
+   		{name:'join_date',index:'join_date', width:64},	
+   		{name:'reve',index:'reve', width:49},	
+   		{name:'last_modified',index:'last_modified', width:62},	
+   	],
+	width:720,
+	height:330,
+	loadui:"block",
+	multiselect: true, 
+	multiboxonly: true,
+   	rowNum:50,
+   	rowList:[30,50,100,150,200],
+    imgpath: '/{{=request.application}}/static/styles/jqgrid/sand/images',
+   	pager: jQuery('#pager2'),
+   	sortname: 'code',
+    viewrecords: true,
+    sortorder: "asc",
+	hidegrid: false,
+    caption:"{{=T('Members Search List')}}",
+	gridComplete: function(){
+		rowlist = $('#list2').getDataIDs();
+		$('#list2').resetSelection(); 
+		for (i=0;i<rowlist.length;i++) {
+			if ($('#list2').getRowData(rowlist[i]).sel == 1) {
+				$('#list2').setSelection(rowlist[i]);
+			}
+			alink = "<a href='/{{=request.application}}/members/show/" +rowlist[i]+ "' target='_blank'>{{=T('Details')}}</a>";
+			$("#list2").setRowData(rowlist[i],{id:alink});
+		}
+		userdata = $("#list2").getGridParam('userData');
+		if (userdata['allselected'] == 1) {
+			//selectall
+		}
+			
+		$('#list2').setGridParam({
+			onSelectRow: function(id){ 
+				if (selectlock == true) {return true;}
+				sr = $('#list2').getGridParam('selarrrow');
+				srs = "-"+sr.join("-")+"-";
+				if (srs.indexOf("-"+id+"-") >= 0) {
+        			$.blockUI({  message: $('img#LoadingBox'), fadeOut:  0,  overlayCSS:  { backgroundColor:'#FFF', opacity: '0'  },  css: {  top:  ($(window).height() - 32) /2 + 'px', left: ($(window).width() - 32) /2 + 'px', border: 'none', backgroundColor: 'transparent', opacity: '1', width: '32px' }  }); 
+					$.ajax({
+  						url: "/{{=request.application}}/members/selected", 
+						timeout: 5000,
+						data: {id:id},
+						cache: false,
+						success: function(data){
+							$.unblockUI();
+						},
+						error: function (XMLHttpRequest, textStatus, errorThrown) {
+							selectlock = true;
+              			  	$('#list2').setSelection(id);
+							$.unblockUI();
+							selectlock=false;
+						}
+					});
+				} else {
+        			$.blockUI({  message: $('img#LoadingBox'), fadeOut:  0,  overlayCSS:  { backgroundColor:'#FFF', opacity: '0'  },  css: {  top:  ($(window).height() - 32) /2 + 'px', left: ($(window).width() - 32) /2 + 'px', border: 'none', backgroundColor: 'transparent', opacity: '1', width: '32px' }  }); 
+					$.ajax({
+  						url: "/{{=request.application}}/members/unselected", 
+						timeout: 5000,
+						data: {id:id},
+						cache: false,
+						success: function(data){
+							$.unblockUI();
+						},
+						error: function (XMLHttpRequest, textStatus, errorThrown) {
+							selectlock = true;
+              			  	$('#list2').setSelection(id);
+							$.unblockUI();
+							selectlock=false;
+						}
+					});
+				}
+			} 
+
+		})
+	},
+	onSelectAll: function(ids){ 
+		var tmpdata = {};
+		for (xx in search_list) {
+			if (search_list[xx] != "") {
+				tmpdata[xx] = search_list[xx];
+			}
+		}
+		if (ids.length > 0) {
+        	$.blockUI({  message: $('img#LoadingBox'), fadeOut:  0,  overlayCSS:  { backgroundColor:'#FFF', opacity: '0' },  css: {  top:  ($(window).height() - 32) /2 + 'px', left: ($(window).width() - 32) /2 + 'px', border: 'none', backgroundColor: 'transparent', opacity: '1', width: '32px' }  }); 
+			tmpdata["action"] = "selected";
+			$.ajax({
+  				url: "/{{=request.application}}/members/selectall", 
+				timeout: 5000,
+				data: tmpdata,
+				cache: false,
+				success: function(data){
+					$.unblockUI();
+				},
+				error: function (XMLHttpRequest, textStatus, errorThrown) {
+					$.unblockUI();
+                	$('#list2').trigger("reloadGrid");
+				}
+			});
+		} else {
+        	$.blockUI({  message: $('img#LoadingBox'), fadeOut:  0,  overlayCSS:  {backgroundColor:'#FFF', opacity: '0'},  css: {  top:  ($(window).height() - 32) /2 + 'px', left: ($(window).width() - 32) /2 + 'px', border: 'none', backgroundColor: 'transparent', opacity: '1', width: '32px' }  }); 
+			tmpdata["action"] = "unselected";
+			$.ajax({
+  				url: "/{{=request.application}}/members/selectall", 
+				timeout: 5000,
+				data: tmpdata,
+				cache: false,
+				success: function(data){
+					$.unblockUI();
+				},
+				error: function (XMLHttpRequest, textStatus, errorThrown) {
+					$.unblockUI();
+                	$('#list2').trigger("reloadGrid");
+				}
+			});
+		}
+	},
+	loadBeforeSend: function(pg){
+		$("#list2").setGridParam({onSelectRow: function(id){;}}); 
+	}
+
+}).navGrid('#pager2',{edit:false,add:false,del:false,search:false,refresh:true});
+
+
+
+
+
+});
+
+var timeoutHnd;
+var flAuto = false; 
+
+function doSearch(ev){ 
+	if(!flAuto) return; 
+	if(timeoutHnd) 
+		clearTimeout(timeoutHnd);
+	timeoutHnd = setTimeout(gridReload,500);
+};
+
+function prepareValue(tn){
+	estr = 'if ($("#search_'+tn+'").val() != "") search_list["s_'+tn+'"] = $("#search_'+tn+'").val(); else search_list["s_'+tn+'"] = "";';
+	eval(estr);
+};
+function prepareCheck(tn){
+	estr = 'if ($("#search_'+tn+'").is(":checked")) search_list["s_'+tn+'"] = "True"; else search_list["s_'+tn+'"] = "";';
+	eval(estr);
+};
+
+function gridReload(){ 
+
+	clist = ['sel','not_alive','remark_ex','is_mem','noemail','nofax'];
+	vlist = ['code','name','sex','educ','mstatus','cere','reve','remark','address','church','phone','staywith','mgroup','mcommittee','frombirthday','tobirthday','fromjoin','tojoin','email','child_reve','fromchild_date','tochild_date','occu','mem_no'];
+
+	for (i=0;i<clist.length;i++) { prepareCheck(clist[i]); }
+	for (i=0;i<vlist.length;i++) { prepareValue(vlist[i]); }
+
+	search_text = "";
+	for (xx in search_list) {
+		if (search_list[xx] != "") search_text += "&" + xx + "=" + search_list[xx];
+	}
+	search_text = encode_utf8(search_text);
+	$("#list2").setGridParam({url:"/{{=request.application}}/members/searchresult?s=s"+search_text,page:1}).trigger("reloadGrid"); 
+	if(!flAuto) cleanup();
+};
+
+function doPrint5(){
+$('#ex5').jqm({
+	ajax: '{{=URL(r=request,f='printout',vars=dict(_=time.time()))}}'+'&list=list'+search_text,
+	ajaxText: '<div><center><img id="LoadingBox" src="/{{=request.application}}/static/images/loading.gif"/>Loading...</center></div>'
+}).jqmShow();
+
+}
+
+function enableAutosubmit(state){
+	flAuto = state;
+	$("#submitButton").attr("disabled",state); 
+	if (!flAuto) cleanup();
+	gridReload();
+};
+
+function cleanup(){
+$("#search_code").val("");
+$("#search_name").val("");
+$("#search_address").val("");
+$("#search_sel").attr("checked",false);
+$("#search_is_mem").attr("checked",false);
+$("#search_not_alive").attr("checked",false);
+
+$("#search_sex").val("");
+$("#search_educ").val("");
+$("#search_mstatus").val("");
+$("#search_cere").val("");
+$("#search_reve").val("");
+$("#search_church").val("");
+
+$("#search_remark_ex").attr("checked",false);
+$("#search_remark").val("");
+$("#search_staywith").val("");
+$("#search_mgroup").val("");
+$("#search_mcommittee").val("");
+$("#search_phone").val("");
+$("#search_email").val("");
+$("#search_frombirthday").val("");
+$("#search_tobirthday").val("");
+$("#search_fromjoin").val("");
+$("#search_tojoin").val("");
+$("#search_fromchild_date").val("");
+$("#search_tochild_date").val("");
+$("#search_child_reve").val("");
+$("#search_occu").val("");
+$("#search_mem_no").val("");
+
+$("#search_noemail").attr("checked",false);
+$("#search_nofax").attr("checked",false);
+
+};
+
+
+</script>
+
+{{if session.language == "en":}}
+<div>  
+	{{=T('Code')}}: <input type="text" id="search_code" size="3" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" />
+	&nbsp;{{=T('Name')}}: <input type="text" id="search_name" size="6" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" />
+	&nbsp;{{=T('Address')}}: <input type="text" id="search_address" size="12" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" />
+	&nbsp;<input type="checkbox" id="search_sel" onclick="doSearch(arguments[0]||event)">{{=T('Printout')}}
+	&nbsp;<input type="checkbox" id="search_not_alive" onclick="doSearch(arguments[0]||event)">{{=T('Dead')}}
+	<input type="checkbox" id="autosearch" onclick="enableAutosubmit(this.checked)"><span style="color:#990000;">{{=T('Autosearch')}}</span>
+	<button onclick="cleanup();gridReload()" id="clearButton" style="margin-left:10px;">{{=T('Clear')}}</button>
+	<button onclick="gridReload()" id="submitButton" style="margin-left:10px;">{{=T('Search')}}</button>
+</div> 
+<div>
+	{{=T('Sex')}}: {{=SELECT(sex_list,_id='search_sex',_onChange="doSearch(arguments[0]||event)")}}
+	&nbsp;{{=T('Education')}}: {{=SELECT(educ_list,_id='search_educ',_onChange="doSearch(arguments[0]||event)")}}
+	&nbsp;{{=T('Marry status')}}: {{=SELECT(mstatus_list,_id='search_mstatus',_onChange="doSearch(arguments[0]||event)")}}
+	&nbsp;{{=T('Occupation')}}: <input type="text" id="search_occu" size="12" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" />
+	&nbsp;<input type="checkbox" id="search_is_mem" onclick="doSearch(arguments[0]||event)">{{=T('Registered Member')}}
+</div>
+<div>
+	{{=T('Ceremony')}}: {{=SELECT(cere_list,_id='search_cere',_onChange="doSearch(arguments[0]||event)")}}
+	&nbsp;{{=T('Reverend')}}: {{=SELECT(reve_list,_id='search_reve',_onChange="doSearch(arguments[0]||event)")}}
+	&nbsp;{{=T('Church')}}: {{=SELECT(church_list,_id='search_church',_onChange="doSearch(arguments[0]||event)")}}
+	&nbsp;{{=T('Childhood Reverend')}}: {{=SELECT(reve_list,_id='search_child_reve',_onChange="doSearch(arguments[0]||event)")}}
+</div>
+<div>
+	{{=T('Remark')}}: <input type="text" id="search_remark" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" /><input type="checkbox" id="search_remark_ex" onclick="doSearch(arguments[0]||event)">{{=T('Exclusive')}}
+	&nbsp;&nbsp;{{=T('Stay with')}}: <input type="text" id="search_staywith" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" />
+	&nbsp;{{=T('Member Group')}}: <input type="text" id="search_mgroup" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" />
+	&nbsp;{{=T('Committee')}}: <input type="text" id="search_mcommittee" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" />
+</div>
+<div>
+	{{=T('Birthday')}}: <input type="text" id="search_frombirthday" class="date" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" onchange="doSearch(arguments[0]||event)" />-<input type="text" id="search_tobirthday" class="date" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" onchange="doSearch(arguments[0]||event)"/>
+	&nbsp;{{=T('Phone')}}: <input type="text" id="search_phone" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" />
+	&nbsp;{{=T('Email/Fax')}}: <input type="text" id="search_email" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" />
+	<input type="checkbox" id="search_noemail" onclick="doSearch(arguments[0]||event)">{{=T('no email')}}
+	<input type="checkbox" id="search_nofax" onclick="doSearch(arguments[0]||event)">{{=T('no fax')}}
+</div>
+<div>
+	{{=T('Ablution date')}}: <input type="text" id="search_fromjoin" class="date" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" onchange="doSearch(arguments[0]||event)" />-<input type="text" id="search_tojoin" class="date" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" onchange="doSearch(arguments[0]||event)"/>
+	&nbsp;{{=T('Childhood Memebership date')}}: <input type="text" id="search_fromchild_date" class="date" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" onchange="doSearch(arguments[0]||event)" />-<input type="text" id="search_tochild_date" class="date" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" onchange="doSearch(arguments[0]||event)"/>
+</div>
+<div>
+	&nbsp;{{=T('Membership number')}}: <input type="text" id="search_mem_no" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" />
+</div>
+{{else:}}
+<div>  
+	{{=T('Code')}}: <input type="text" id="search_code" size="3" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" />
+	&nbsp;{{=T('Name')}}: <input type="text" id="search_name" size="6" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" />
+	&nbsp;{{=T('Address')}}: <input type="text" id="search_address" size="12" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" />
+	&nbsp;<input type="checkbox" id="search_sel" onclick="doSearch(arguments[0]||event)">{{=T('Printout')}}
+	&nbsp;<input type="checkbox" id="search_is_mem" onclick="doSearch(arguments[0]||event)">{{=T('Registered Member')}}
+	&nbsp;<input type="checkbox" id="search_not_alive" onclick="doSearch(arguments[0]||event)">{{=T('Dead')}}
+	<input type="checkbox" id="autosearch" onclick="enableAutosubmit(this.checked)"><span style="color:#990000;">{{=T('Autosearch')}}</span>
+	<button onclick="cleanup();gridReload()" id="clearButton" style="margin-left:10px;">{{=T('Clear')}}</button>
+	<button onclick="gridReload()" id="submitButton" style="margin-left:10px;">{{=T('Search')}}</button>
+</div> 
+<div>
+	{{=T('Sex')}}: {{=SELECT(sex_list,_id='search_sex',_onChange="doSearch(arguments[0]||event)")}}
+	&nbsp;{{=T('Education')}}: {{=SELECT(educ_list,_id='search_educ',_onChange="doSearch(arguments[0]||event)")}}
+	&nbsp;{{=T('Marry status')}}: {{=SELECT(mstatus_list,_id='search_mstatus',_onChange="doSearch(arguments[0]||event)")}}
+	&nbsp;{{=T('Ceremony')}}: {{=SELECT(cere_list,_id='search_cere',_onChange="doSearch(arguments[0]||event)")}}
+	&nbsp;{{=T('Reverend')}}: {{=SELECT(reve_list,_id='search_reve',_onChange="doSearch(arguments[0]||event)")}}
+	&nbsp;{{=T('Church')}}: {{=SELECT(church_list,_id='search_church',_onChange="doSearch(arguments[0]||event)")}}
+</div>
+<div>
+	{{=T('Remark')}}: <input type="text" id="search_remark" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" /><input type="checkbox" id="search_remark_ex" onclick="doSearch(arguments[0]||event)">{{=T('Exclusive')}}
+	&nbsp;&nbsp;{{=T('Stay with')}}: <input type="text" id="search_staywith" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" />
+	&nbsp;{{=T('Member Group')}}: <input type="text" id="search_mgroup" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" />
+	&nbsp;{{=T('Committee')}}: <input type="text" id="search_mcommittee" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" />
+	&nbsp;{{=T('Phone')}}: <input type="text" id="search_phone" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" />
+</div>
+<div>
+	{{=T('Birthday')}}: <input type="text" id="search_frombirthday" class="date" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" onchange="doSearch(arguments[0]||event)" />-<input type="text" id="search_tobirthday" class="date" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" onchange="doSearch(arguments[0]||event)"/>
+	{{=T('Ablution date')}}: <input type="text" id="search_fromjoin" class="date" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" onchange="doSearch(arguments[0]||event)" />-<input type="text" id="search_tojoin" class="date" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" onchange="doSearch(arguments[0]||event)"/>
+	{{=T('Email/Fax')}}: <input type="text" id="search_email" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" />
+	<input type="checkbox" id="search_noemail" onclick="doSearch(arguments[0]||event)">{{=T('no email')}}
+	<input type="checkbox" id="search_nofax" onclick="doSearch(arguments[0]||event)">{{=T('no fax')}}
+</div>
+<div>
+	{{=T('Childhood Memebership date')}}: <input type="text" id="search_fromchild_date" class="date" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" onchange="doSearch(arguments[0]||event)" />-<input type="text" id="search_tochild_date" class="date" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" onchange="doSearch(arguments[0]||event)"/>
+	&nbsp;{{=T('Childhood Reverend')}}: {{=SELECT(reve_list,_id='search_child_reve',_onChange="doSearch(arguments[0]||event)")}}
+	&nbsp;{{=T('Occupation')}}: <input type="text" id="search_occu" size="12" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" />
+	&nbsp;{{=T('Membership number')}}: <input type="text" id="search_mem_no" size="8" onkeydown="doSearch(arguments[0]||event)" onpaste="doSearch(arguments[0]||event)" oncut="doSearch(arguments[0]||event)" />
+</div>
+{{pass}}
+
+<div><center>
+[<a href='#' id="unselectallnow" class="unselectallnow">{{=T('Unselect All')}}</a>]
+&nbsp;&nbsp;[<a href='#' class="ex2trigger" target="emails">{{=T("Export Email")}}</a>]
+&nbsp;&nbsp;[<a href='#' class="ex4trigger" target="fax">{{=T("Export Fax")}}</a>]
+&nbsp;&nbsp;[<a href='#' class="ex3trigger" >{{=T("Print Selected")}}</a>]
+&nbsp;&nbsp;[<a href='#' onclick="doPrint5();" >{{=T("Print Search List")}}</a>]
+</center></div>
+<div><center>
+<table id="list2" class="scroll" cellpadding="0" cellspacing="0"></table> 
+<div id="pager2" class="scroll" style="text-align:center;"></div> 
+</center></div>
+
+{{=output}}

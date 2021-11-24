@@ -1,0 +1,85 @@
+--- superfish.js	2008-07-27 09:31:28.000000000 +0200
++++ superfish_firstOnClick.js	2008-09-12 10:09:27.000000000 +0200
+@@ -15,11 +15,23 @@
+ 
+ 		var sf = $.fn.superfish,
+ 			c = sf.c,
++			menuActive = false,
+ 			$arrow = $(['<span class="',c.arrowClass,'"> &#187;</span>'].join('')),
++			click = function(){
++				var $$ = $(this), menu = getMenu($$), o = sf.op;
++				if (o.firstOnClick && !menuActive && $$.parent()[0] == menu) {
++					menuActive = true;
++					clearTimeout(menu.sfTimer);
++					$$.showSuperfishUl().siblings().hideSuperfishUl();
++					return false; // prevent redirect to anchor target href
++				}
++			},
+ 			over = function(){
+-				var $$ = $(this), menu = getMenu($$);
+-				clearTimeout(menu.sfTimer);
+-				$$.showSuperfishUl().siblings().hideSuperfishUl();
++				var $$ = $(this), menu = getMenu($$), o = sf.op;
++				if (!o.firstOnClick || menuActive || $$.parent()[0] != menu) {
++					clearTimeout(menu.sfTimer);
++					$$.showSuperfishUl().siblings().hideSuperfishUl();
++				}
+ 			},
+ 			out = function(){
+ 				var $$ = $(this), menu = getMenu($$), o = sf.op;
+@@ -28,7 +40,8 @@
+ 					o.retainPath=($.inArray($$[0],o.$path)>-1);
+ 					$$.hideSuperfishUl();
+ 					if (o.$path.length && $$.parents(['li.',o.hoverClass].join('')).length<1){over.call(o.$path);}
+-				},o.delay);	
++					else {menuActive = false;}
++				},o.delay);
+ 			},
+ 			getMenu = function($menu){
+ 				var menu = $menu.parents(['ul.',c.menuClass,':first'].join(''))[0];
+@@ -36,7 +49,7 @@
+ 				return menu;
+ 			},
+ 			addArrow = function($a){ $a.addClass(c.anchorClass).append($arrow.clone()); };
+-			
++
+ 		return this.each(function() {
+ 			var s = this.serial = sf.o.length;
+ 			var o = $.extend({},sf.defaults,op);
+@@ -45,20 +58,22 @@
+ 					.filter('li:has(ul)').removeClass(o.pathClass);
+ 			});
+ 			sf.o[s] = sf.op = o;
+-			
+-			$('li:has(ul)',this)[($.fn.hoverIntent && !o.disableHI) ? 'hoverIntent' : 'hover'](over,out).each(function() {
++
++			$('li:has(ul)',this)[($.fn.hoverIntent && !o.disableHI) ? 'hoverIntent' : 'hover'](over,out)
++			.click(click)
++			.each(function() {
+ 				if (o.autoArrows) addArrow( $('>a:first-child',this) );
+ 			})
+ 			.not('.'+c.bcClass)
+ 				.hideSuperfishUl();
+-			
++
+ 			var $a = $('a',this);
+ 			$a.each(function(i){
+ 				var $li = $a.eq(i).parents('li');
+ 				$a.eq(i).focus(function(){over.call($li);}).blur(function(){out.call($li);});
+ 			});
+ 			o.onInit.call(this);
+-			
++
+ 		}).each(function() {
+ 			menuClasses = [c.menuClass];
+ 			if (sf.op.dropShadows  && !($.browser.msie && $.browser.version < 7)) menuClasses.push(c.shadowClass);
+@@ -94,7 +109,8 @@
+ 		onInit		: function(){}, // callback functions
+ 		onBeforeShow: function(){},
+ 		onShow		: function(){},
+-		onHide		: function(){}
++		onHide		: function(){},
++		firstOnClick : false // true - open first level on click (like classic application menu)
+ 	};
+ 	$.fn.extend({
+ 		hideSuperfishUl : function(){

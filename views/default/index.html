@@ -1,0 +1,11 @@
+{{extend 'layout.html'}}
+<div><center>
+[<a href="{{=URL(r=request,c='members',f='search',args=[''])}}" title="{{=T("Member Search")}}">{{=T("Member Search")}}</a>]
+&nbsp;&nbsp;[<a href="{{=URL(r=request,c='members',f='show',args=[''])}}" title="{{=T("Member List")}}">{{=T("Member List")}}</a>]
+&nbsp;&nbsp;[<a href="{{=URL(r=request,c='donations',f='new',args=[''])}}" title="{{=T("New Donation")}}">{{=T("New Donation")}}</a>]
+&nbsp;&nbsp;[<a href="{{=URL(r=request,c='donations',f='search',args=[''])}}" title="{{=T("Donation Search")}}">{{=T("Donation Search")}}</a>]
+</center></div>
+
+<div>
+<center><img src="/{{=request.application}}/static/images/main.png" border=0></center>
+</div>

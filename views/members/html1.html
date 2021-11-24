@@ -1,0 +1,27 @@
+<html>
+<meta http-equiv='content-type' content='text/html; charset=utf-8'>
+<style>
+html { font-family: Helvetica; font-size: 30px; } 
+</style>
+<body>
+
+<table width='800' border='1' cellspacing='0'>
+<tbody>
+<tr>
+<td valign='top'>{{=T('Code')}}</td>
+<td valign='top'>{{=T('Name')}}</td>
+<td valign='top'>{{=T('Image')}}</td>
+</tr>
+{{for x in result:}}
+<tr>
+<td valign='top'>{{=x.code}}</td>
+<td valign='top'>{{=x.name}}</td>
+<td valign='top' width="400" align="center">
+<img border=0 width="400px" src="{{=URL(r=request,f='download',args=[x.image])}}"/>
+</td>
+<tr/>
+{{pass}}
+</tbody>
+</table>
+</body>
+</html>

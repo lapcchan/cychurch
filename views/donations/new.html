@@ -1,0 +1,186 @@
+{{extend 'layout.html'}}
+<script src="/{{=request.application}}/static/scripts/jquery.validate.pack.js"></script>
+<script type="text/javascript"><!--
+function encode_utf8( s )
+{
+	if ($.browser.msie) {
+		return encodeURI( s ) ;
+	} else {
+		return s;
+	}
+}
+
+var name_count = 0;
+var name_list = "?";
+
+$(document).ready(function(){
+
+	$("select#dtypename").change(function(){
+		$.getJSON("/{{=request.application}}/donations/select_dtypecontent",{id: $(this).val()}, function(j){
+			var options = '';
+			for (var i = 0; i < j.length; i++) {
+				options += '<option value="' + j[i].optionValue + '">' + j[i].optionDisplay + '</option>';
+			}
+			$("#dtypecontent").html(options);
+			$('#dtypecontent option:first').attr('selected', 'selected');
+		});
+	});			
+//	$("select#dtypecontent").change(function(){
+//		$("#dchurch").html("{{=churcho}}");
+//	});			
+
+    $("#ac_name").autocomplete("/{{=request.application}}/donations/coderesult", {
+        width: 180,
+        minChars: 1,
+		max: 100,
+        autoFill: false,
+        selectFirst: true,
+        formatItem: function(row, i, max) {
+			if (row[3]) {		
+            return row[1] + ":  " + row[2] + " [" + row[3] + "]";
+			} else {
+            return row[1] + ":  " + row[2];
+			}
+        },
+        formatResult: function(row) {
+            return "";
+        }
+    });
+
+    $("#ac_name").result(function(event, data, formatted) {
+        if (data)
+			if (name_count < 4) {
+				if (data[3]) { tmp = data[2] + " [" + data[3] + "]";}
+				else { tmp = data[2];}	
+				$("#t1").append(tmp+"<br/>");
+				$("#ac_name").val("");
+				name_count += 1;
+				name_list += "n=" + data[0] + "&nn=" + encode_utf8(tmp) + "&nc=" + encode_utf8(data[4]) + "&";
+			}
+    });
+
+	$('#clear').click(function(){
+		clearnow();
+		$("#ddate").val("");
+		$("#damount").val("");
+		$("#dchurch").val("1");
+	});
+
+	$("#submit").click(function(){
+		if ( ($("#sform").validate().element("#ddate")) && ($("#sform").validate().element("#damount")) ){
+			submit_list = name_list;
+			if (name_count > 0) {
+				submitnow();
+			} else {
+				if ($("#dtypecontent").val() != "1") {
+					submitnow();
+				} else {
+//					alert("Missing");
+				}
+			}
+		}
+		return false;
+	});
+});
+
+function clearnow() {
+	name_count = 0;
+	name_list = "?";
+	$("#t1").html("");
+	$("#ac_name").val("");
+	$("#dtypegroup").val("");
+	$("#dtypecontent").val("1");
+
+};
+
+function submitnow() {
+			submit_list += "ncount=" + name_count + "&";
+			submit_list += "id=" + $("#dtypecontent").val() + "&";
+			submit_list += "amount=" + $("#damount").val() + "&";
+			submit_list += "date=" + $("#ddate").val() + "&";
+			submit_list += "group=" + encode_utf8($("#dtypegroup").val()) + "&";
+			submit_list += "church=" + encode_utf8($("#dchurch").val()) + "&";
+			submit_list += "name=" + encode_utf8($("#dtypename").val()) + "&";
+
+
+            $.blockUI({  message: $('img#LoadingBox'), fadeOut:  0,  overlayCSS:  { backgroundColor:'#FFF', opacity: '0' },  css: {  top:  ($(window).height() - 32) /2 + 'px', left: ($(window).width() - 32) /2 + 'px', border: 'none', backgroundColor: 'transparent', opacity: '1', width: '32px' }  }); 
+
+            $.ajax({
+                url: "/{{=request.application}}/donations/newsubmit"+submit_list, 
+                timeout: 5000,
+                data: {},
+                cache: false,
+                success: function(data){
+					if (data != "error") {
+                    	$('#dlist').append(data);
+						clearnow();
+                		$.unblockUI();
+					} else {
+                    	$.unblockUI();
+						alert("{{=T("Submit Error. Please Contact Administrator.")}}");
+					}
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    $.unblockUI();
+					alert("{{=T("Server Timeout, Please Submit Again.")}}");
+                }
+            });
+
+
+
+}
+
+-->
+</script>
+
+<form id="sform" autocomplete="off">
+	{{=T("Donation Date")}}:
+	<input id="ddate" name="ddate" class="dateISO required" size="9" value="" />
+	<select id="dchurch" >
+	{{for x in dchurch:}}
+		<option value="{{=x.name}}">{{=x.name}}</option>
+	{{pass}}
+	</select>
+	<select id="dtypename">
+	{{for x in dtypename:}}
+		<option value="{{=x.name}}">{{=x.name}}</option>
+	{{pass}}
+	</select>
+	<select id="dtypecontent">
+	{{for x in dtypecontent:}}
+		<option value="{{=x.id}}">{{=x.content}}</option>
+	{{pass}}
+	</select>
+	&nbsp;{{=T('Amount')}}:
+	<input id="damount" name="damount" class="number required" size="9" value="" />
+	<input class="clear" type="button" value="{{=T('Clear')}}" id="clear" />
+	<input class="submit" type="submit" value="{{=T('Submit')}}" id="submit" />
+	<br/>
+	{{=T('Name')}}:
+	<input id="ac_name" type="text"/>
+	&nbsp;{{=T('Group')}}:
+	<select id="dtypegroup">
+		<option value=""></option>
+		<option value="夫婦">夫婦</option>
+		<option value="家庭">家庭</option>
+	</select>
+</form>
+
+
+<div style="position:relative;height:100%;">
+	<div id="t1" style="position:relative;float:left;width:100px;margin:0 50px;height:100%">
+	</div>
+	<div id="t2" style="float:left;width:300px;margin:0 20px;height:100%">
+	</div>
+	<div id="t3" style="float:left;width:100px;height:100%">
+	</div>
+</div>
+
+<div>
+<br/><br/><br/><br/><br/>
+<table ><thead ><tr><th style="padding:0 30px;">{{=T("Date")}}</th><th style="padding:0 30px;">{{=T("Amount")}}</th><th style="padding:0 30px;">{{=T("Name")}}</th><th>{{=T('Church')}}</th><th>{{=T("donation name")}}</th><th>{{=T("donation content")}}</th><th>{{=T("donation type")}}</th><th>{{=T("Group")}}</th><th>{{=T("number")}}</th></tr></thead>
+<tbody id="dlist">
+</tbody>
+</table>
+<br/><br/><br/>
+</div>

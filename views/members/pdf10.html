@@ -1,0 +1,23 @@
+<html>
+<meta http-equiv='content-type' content='text/html; charset=utf-8'>
+<style>
+@page { size: a4 portrait; margin: 1cm; }
+html { font-family: Helvetica; font-size: 20px; } 
+</style>
+<body>
+
+<table >
+{{i = 0}}
+{{for x in rows:}}
+<div>{{=x.name}} {{=x.sex}}</div>
+{{i = i + 1}}
+{{if i == 10:}}
+<div><pdf:nextpage/></div>
+{{i = 0}}
+{{pass}}
+{{pass}}
+
+
+</table>
+</body>
+</html>

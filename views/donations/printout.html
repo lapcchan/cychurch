@@ -1,0 +1,37 @@
+<div style="text-align:right;">
+<a href="#" class="jqmClose">[{{=T('Close')}}]</a>
+</div>
+<div>
+{{if fromdate == None and todate == None:}}
+	{{=T("Complete List")}}
+{{else:}}
+	{{if fromdate == None: fromdate = T('any')}}
+	{{if todate == None: todate = T('any')}}
+	{{=fromdate}} {{=T("to")}} {{=todate}}
+{{pass}}
+<br/>
+{{if request.vars.s_name:}}
+{{=T('Name')}}: {{=request.vars.s_name}}<br/>
+{{pass}}
+{{if request.vars.s_church:}}
+{{=T('Church')}}: {{=request.vars.s_church}}<br/>
+{{pass}}
+{{if request.vars.s_dtype:}}
+{{=T('donation name')}}: {{=request.vars.s_dtype}}<br/>
+{{pass}}
+<br/>
+{{=T('Note: it may takes over a minute per thousand records for PDF generation.')}}<br/>
+{{=T('Note: you have to wait for the PDF completed before you can continue.')}}
+<center>
+<br/>
+<a target="_blank" href="{{=URL(r=request,f='pdf1',vars=request.vars)}}">PDF {{=T("Donation")}}{{=T("Summary")}}</a><br/>
+<a target="_blank" href="{{=URL(r=request,f='pdf2',vars=request.vars)}}">PDF {{=T("Receipt")}}</a><br/>
+<a target="_blank" href="{{=URL(r=request,f='pdf2p',vars=request.vars)}}">PDF {{=T("Receipt")}} [{{=T("Plain Paper")}}]</a><br/>
+<a target="_blank" href="{{=URL(r=request,f='pdf1a',vars=request.vars)}}">PDF {{=T("Donation")}}{{=T("Summary")}} ({{=T("Outward")}})</a><br/>
+<a target="_blank" href="{{=URL(r=request,f='pdf2a',vars=request.vars)}}">PDF {{=T("Receipt")}} ({{=T("Outward")}})</a><br/>
+<a target="_blank" href="{{=URL(r=request,f='pdf2ap',vars=request.vars)}}">PDF {{=T("Receipt")}} [{{=T("Plain Paper")}}] ({{=T("Outward")}})</a><br/>
+<a target="_blank" href="{{=URL(r=request,f='pdf3',vars=request.vars)}}">PDF {{=T("Donation Name List")}}</a><br/>
+<a target="_blank" href="{{=URL(r=request,f='pdf4',vars=request.vars)}}">PDF {{=T("Donation")}}{{=T("Details")}}</a><br/>
+</center>
+
+</div>
