@@ -6,3 +6,4 @@ sessions/*
 compiled/*
 compiled/
 uploads/*
+**/.pyc
